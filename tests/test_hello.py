@@ -1,4 +1,4 @@
-from kafkahelper import hellosingu
+from singupy.kafkahelper import hellosingu
 
 
 def test_hello_user():
