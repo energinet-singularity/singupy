@@ -7,7 +7,7 @@ Our shared Python Library for packages, functions, classes, definitions and modu
 Holds the following packages:
 * hello
 
-Holds the follwong moduels:
+Holds the following modules:
 * singukafka
 
 <!--
