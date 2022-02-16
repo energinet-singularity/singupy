@@ -1,1 +1,1 @@
-__all__ = ['kafkahelper']
+__all__ = ['kafkahelper', 'hello']

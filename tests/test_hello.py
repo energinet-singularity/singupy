@@ -1,6 +1,6 @@
-from singupy.kafkahelper import hellosingu
+from singupy.hello import singubot
 
 
 def test_hello_user():
-    obj = hellosingu.HelloSingu(user_initials="ABC")
+    obj = singubot.UserBot(user_initials="ABC")
     assert obj.say_hey() == "Well hello there ABC!"
