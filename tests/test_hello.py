@@ -1,6 +1,6 @@
-from singupy.hello import singubot
+from singupy.hello import singu
 
 
 def test_hello_user():
-    obj = singubot.UserBot(user_initials="ABC")
-    assert obj.say_hey() == "Well hello there ABC!"
+    obj = singu.SinguBot(name="Awesome")
+    assert obj.say_hey() == "Well hello there Awesome!"

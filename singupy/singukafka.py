@@ -1,3 +1,7 @@
+"""
+A module for Kafka interaction. It is currently under development and not properly tested.
+Use with caution!
+"""
 from kafka import KafkaProducer, KafkaConsumer, TopicPartition
 from json import dumps, loads
 import sys
