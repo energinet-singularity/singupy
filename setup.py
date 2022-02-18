@@ -10,5 +10,5 @@ setup(
     version='0.0',
     license='Apache License 2.0',
     description='Libary for Singularity',
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
 )
