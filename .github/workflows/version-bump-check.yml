@@ -1,0 +1,35 @@
+name: Verify version has changed
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'singupy/**'
+
+jobs:
+  get-version-numbers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: new
+
+      - name: Checkout main
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          path: main
+
+      - name: Get new package version number
+        run: | 
+          NEW_VERSION=$(grep " version=" new/setup.py | cut -f2 -d\')
+          OLD_VERSION=$(grep " version=" main/setup.py | cut -f2 -d\')
+          echo "New version is: '$NEW_VERSION'"          
+          echo "Old version is: '$OLD_VERSION'"
+          if [ "$NEW_VERSION" == "$OLD_VERSION" ]; then
+            echo "Package version number in setup.py has not been updated."
+            exit 1
+          fi
