@@ -7,7 +7,7 @@ on:
     paths:
       - 'singupy/**'
 
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   get-version-numbers:
