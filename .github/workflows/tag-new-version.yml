@@ -1,0 +1,28 @@
+name: Tag new version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'singupy/**'
+
+  workflow_dispatch:
+
+jobs:
+  get-version-numbers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get new package version number
+        env:
+          GIT_USERNAME: singu-bot
+        run: | 
+          VERSION=$(grep " version=" setup.py | cut -f2 -d\')
+          git config user.name "${{ env.GIT_USERNAME }}"
+          git config user.email "${{ secrets.SINGU_BOT_EMAIL }}"
+          git tag -a v$VERSION -m "Auto-tag by singu-bot"
+          git push origin v$VERSION
