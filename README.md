@@ -22,7 +22,7 @@ Use the following command to install the library:
 pip install git+https://github.com/energinet-singularity/singupy.git#egg=singupy
 ````
 
-If you want to install the version from a specific branch or version, use this command ('FooBranch' is the branch name):
+If you want to install the version from a specific branch, use this command ('FooBranch' is the branch name):
 
 ````bash
 pip install git+https://github.com/energinet-singularity/singupy.git@FooBranch#egg=singupy
