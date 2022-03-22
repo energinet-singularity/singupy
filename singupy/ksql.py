@@ -5,10 +5,10 @@ from __future__ import annotations
 from typing import List
 import logging
 import re
-from venv import create
 import requests
 
 log = logging.getLogger(__name__)
+
 
 class config:
     name: str = None
@@ -18,7 +18,7 @@ class config:
     create_built: str = None
     children: List[config] = []
 
-    def __init__(self, create_string:str = '', is_actual: bool = False):
+    def __init__(self, create_string: str = '', is_actual: bool = False):
         if create_string == '':
             raise ValueError("'create_string' cannot be an empty string'")
 
@@ -31,7 +31,7 @@ class config:
         else:
             self.create_request = create_string
         assert self.type in ['STREAM', 'TABLE'], f"Unknown type '{self.type}', should be either 'TABLE' or 'STREAM'"
-    
+
     def add_child(self, child: config = None, create_string: str = None, is_acual: bool = False):
         if child is not None and create_string is None:
             self.children.append(child)
@@ -43,16 +43,16 @@ class config:
             raise ValueError("Both 'child' and 'create_string' cannot be set.")
 
 
-
 class manager:
-    broker:str = None
+    broker: str = None
     configs: list(config) = []
 
     def __init__(self, broker: str, configuration: list(config), port: int = 8088):
         match = re.search(r'^(?P<http>https?:\/\/)?(?P<host>[^:]*)(?P<port>:\d{3,7})?$', broker)
-        assert match, f"Could not interpret broker from '{broker}'"
-        assert isinstance(configuration, list) and all(isinstance(c, config) for c in configuration), \
-          f"A valid list of configurations was not supplied"
+        if not match:
+            raise ValueError(f"Could not interpret broker from '{broker}'")
+        if not (isinstance(configuration, list) and all(isinstance(c, config) for c in configuration)):
+            raise ValueError(f"A valid list of configurations was not supplied")
 
         if match.group('port') is not None:
             self.broker = f"{match.group('host')}{match.group('port')}"
@@ -60,22 +60,17 @@ class manager:
             self.broker = f"{match.group('host')}:{port}"
         log.debug(f"Set broker to '{self.broker}'")
 
-        self.config_list = configuration
+        self.configs = configuration
 
     def validate(self):
         if not test_connection(self.broker):
             raise ConnectionError(f"Connection to '{self.broker}' cannot be established.")
 
-        for item in self.config_list:
-            try:
-                assert_configuration(self.broker, item)
-            except Exception as e:
-                log.exception(e)
-                raise ValueError(f"Could not assert '{item.type}' with ID '{item.name}'.")
+        for item in self.configs:
+            assert_configuration(self.broker, item)
 
 
-
-def dict_dive(dictionary: dict, keylist: list, default_return = None):
+def dict_dive(dictionary: dict, keylist: list, default_return=None):
     # This should be moved to a generic place instead of in the ksql module
     assert isinstance(dictionary, dict), "Invalid dictionary"
     assert isinstance(keylist, dict), "Invalid list of keys"
@@ -84,10 +79,10 @@ def dict_dive(dictionary: dict, keylist: list, default_return = None):
 
     if isinstance(child, dict) and len(keylist) > 1:
         return dict_dive(child, keylist[1:], default_return)
-    
+
     if len(keylist) == 1 and child is not None:
         return child
-    
+
     return default_return
 
 
@@ -145,10 +140,11 @@ def create_configuration(host: str, configuration: config):
     status = dict_dive(response[0], ['commandStatus', 'status '], 'ERROR')
     if status != 'SUCCESS':
         # This function should be expanded to handle 'QUEUED', 'PARSING', 'EXECUTING' and perhaps 'TERMINATED' status as well
-        raise ValueError(f"Create of '{configuration.type}' with name '{configuration.name}' resulted in '{status}' response - expected 'SUCCESS'.")
-    
+        raise ValueError(f"Create of '{configuration.type}' with name '{configuration.name}'"
+                         " resulted in '{status}' response - expected 'SUCCESS'.")
+
     configuration.create_built = __get_create_statement(host, configuration)
-    
+
     if configuration.create_built != configuration.create_request:
         log.warning('The requested configuration does not match the built configuration 1:1.')
         log.debug(f"Requested string: {configuration.create_request}")
@@ -161,12 +157,14 @@ def create_configuration(host: str, configuration: config):
 def delete_configuration(host: str, configuration: config):
     for child in configuration.children:
         delete_configuration(host, child)
-    
-    status = dict_dive(post_query(f"DROP {configuration.type} {configuration.type};")[0], ['commandStatus', 'status '], 'ERROR')
+
+    status = dict_dive(post_query(f"DROP {configuration.type} {configuration.type};")[0],
+                       ['commandStatus', 'status '], 'INVALID')
     if status != 'SUCCESS':
         # This function should be expanded to handle 'QUEUED', 'PARSING', 'EXECUTING' and perhaps 'TERMINATED' status as well
-        raise ValueError(f"Drop of '{configuration.type}' with name '{configuration.name}' resulted in '{status}' response - expected 'SUCCESS'.")
-    
+        raise ValueError(f"Drop of '{configuration.type}' with name '{configuration.name}'"
+                         " resulted in '{status}' response - expected 'SUCCESS'.")
+
     configuration.create_built = None
     configuration.create_actual = None
 
@@ -174,7 +172,7 @@ def delete_configuration(host: str, configuration: config):
 def assert_configuration(host: str, configuration: config):
     for child in configuration.children:
         assert_configuration(host, child)
-    
+
     log.info(f"Asserting '{configuration.type}' with id '{configuration.name}' has been configured correctly.")
     configuration.create_actual = __get_create_statement(host, configuration)
 
