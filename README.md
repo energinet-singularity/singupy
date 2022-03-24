@@ -48,10 +48,14 @@ As the API is running in a seperate thread, the main thread can look for updates
 my_api.update_data(d.read_csv('mynewdata.csv'))
 ````
 
-The restful api accepts 'GET' to the '/dataframe' endpoint which will respond with DataFrame metadata and 'POST' to the same endpoint, with the key 'pd-query' exposed as input to the query.
+The restful api will respond with DataFrame metadata to a 'GET' to the '/dataframe' endpoint (this can be changed with the 'dataname' parameter when creating the api object) and query results to a 'POST' to the same endpoint, with the keys 'pd-query' and 'sql-query' exposed as inputs for queries. Please use the 'sql-query' for production environments as this will allow the api and data-source to change without changes to the collecting side.
+
+Note: It will be good practice to expose the 'host' and 'tablename' as variables in the collecting script - that way they can easily be changed.
+Note: In the current implementation, sql table name will always be 'sqldata'.
 
 ````bash
 curl -d "pd-query=first_name=='Evan'" -X POST http://myserver:80/dataframe
+curl -d 'sql-query=SELECT * FROM sqldata WHERE first_name = "Evan"' -X POST http://myserver:80/dataframe
 ````
 
 The resulting body is a hierarichal dict with columns first and rows second.
