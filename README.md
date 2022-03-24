@@ -42,10 +42,10 @@ my_api = singupy.api.DataFrameAPI(pd.read_csv('mydata.csv'))
 
 This will start the flask app in a seperate thread (can be accessed via my_api.thread) - remember to expose the port (default 80) in the Dockerfile in case you are running as a container.
 
-As the API is running in a seperate thread, the main thread can look for updates to the pandas DataFrame and update this as necessary.
+As the API is running in a seperate thread, the main thread can look for updates to the pandas DataFrame and update this as necessary, using the 'update_data' function.
 
 ````python
-my_api.update_data(d.read_csv('mynewdata.csv'))
+my_api.update_data(pd.read_csv('mynewdata.csv'))
 ````
 
 The restful api will respond with DataFrame metadata to a 'GET' to the '/dataframe' endpoint (this can be changed with the 'dataname' parameter when creating the api object) and query results to a 'POST' to the same endpoint, with the keys 'pd-query' and 'sql-query' exposed as inputs for queries. Please use the 'sql-query' for production environments as this will allow the api and data-source to change without changes to the collecting side.
