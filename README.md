@@ -55,7 +55,7 @@ Note: In the current implementation, sql table name will always be 'sqldata'.
 
 ````bash
 curl -d "pd-query=first_name=='Evan'" -X POST http://myserver:80/dataframe
-curl -d 'sql-query=SELECT * FROM sqldata WHERE first_name = "Evan"' -X POST http://myserver:80/dataframe
+curl -d 'sql-query=SELECT * FROM sqldata WHERE first_name = "Evan";' -X POST http://myserver:80/dataframe
 ````
 
 The resulting body is a hierarichal dict with columns first and rows second.
