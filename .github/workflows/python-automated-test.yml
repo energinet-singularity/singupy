@@ -26,6 +26,7 @@ jobs:
         python-version: "3.10"
     - name: Install dependencies
       run: |
+        cat setup.py | sed -n '/install_requires=\[/,/\s\{4\}\]/p' | tail -n+2 | head -n-1 | sed 's/[[:blank:],\x27]//g' > requirements.txt
         python -m pip install --upgrade pip
         pip install flake8 pytest
         find . -name requirements.txt -exec pip install -r {} \;
