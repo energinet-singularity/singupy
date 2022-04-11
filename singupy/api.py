@@ -14,7 +14,6 @@ from pandasql import PandaSQL
 import logging
 import time
 import re
-import json
 from threading import Thread
 from typing import Callable
 
@@ -214,7 +213,7 @@ class SQLRestAPI():
             except Exception as e:
                 state = 400
                 message = {'error': f"'GET' failed with message '{e}'"}
-            return json.dumps(message), state
+            return message, state
 
         def post(self):
             '''Handles 'POST' requests to the endpoint'''
@@ -235,7 +234,7 @@ class SQLRestAPI():
             else:
                 state = 400
                 message = {'error': "No query specified - use the key 'sql-query' to POST a query."}
-            return json.dumps(message), state
+            return message, state
 
 
 class DataFrameAPI():
