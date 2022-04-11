@@ -3,7 +3,6 @@ import logging
 from singupy import api
 import requests
 import pandas as pd
-import json
 
 log = logging.getLogger(__name__)
 
@@ -57,12 +56,12 @@ def test_SQLRestAPI(SQLRestAPI_resource):
         web.port = PORT+10
 
     # Validate GET
-    assert requests.get(f'http://localhost:{web.port}/{web.endpoint}').json() == json.dumps(GetDummy())
+    assert requests.get(f'http://localhost:{web.port}/{web.endpoint}').json() == GetDummy()
 
     # Validate POST
     query = "SELECT * FROM A-TEAM;"
     assert requests.post(f'http://localhost:{web.port}/{web.endpoint}',
-                         json={"sql-query": query}).json() == json.dumps(PostDummy(query))
+                         json={"sql-query": query}).json() == PostDummy(query)
 
     # Validate bad query does not kill web, but returns error
     query = "INSERT INTO A-TEAM (name) VALUES ('Karsten');"
@@ -148,16 +147,18 @@ def test_DataFrameAPI(DataFrameAPI_resource, caplog):
     # Test web service is working
     response = requests.get(f'http://localhost:{test_api.web.port}/{test_api.web.endpoint}')
     assert response.status_code == 200
-    assert response.json() == json.dumps(test_api.metadata())
+    assert response.json() == test_api.metadata()
 
     response = requests.post(f'http://localhost:{test_api.web.port}/{test_api.web.endpoint}',
                              json={"sql-query": "SELECT * FROM MiniData;"})
     assert response.status_code == 200
-    assert response.json() == json.dumps(test_api.query("SELECT * FROM MiniData;"))
+    expected_return = {'name': {'0': 'tom', '1': 'jerry'}, 'age': {'0': 80, '1': 82}}
+    assert response.json() == expected_return
 
     minidata['speed'] = [10, 15]
     test_api['MiniData'] = pd.DataFrame(minidata)
     response = requests.post(f'http://localhost:{test_api.web.port}/{test_api.web.endpoint}',
                              json={"sql-query": "SELECT * FROM MiniData;"})
     assert response.status_code == 200
-    assert response.json() == json.dumps(test_api.query("SELECT * FROM MiniData;"))
+    expected_return = {'name': {'0': 'tom', '1': 'jerry'}, 'age': {'0': 80, '1': 82}, 'speed': {'0': 10, '1': 15}}
+    assert response.json() == expected_return
