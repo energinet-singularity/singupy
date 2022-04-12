@@ -61,7 +61,7 @@ class SQLRestAPI():
         host : str
             Can be changed if required, but will default to '0.0.0.0' which will allow access from outside as well
         '''
-        self._port = port
+        self.__port = port
         self.__host = host
         self.__endpoint = endpoint
         self.getcall = getcall
@@ -82,7 +82,7 @@ class SQLRestAPI():
 
     @property
     def port(self) -> int:
-        return self._port
+        return self.__port
 
     @port.setter
     def port(self, value: int):
@@ -90,7 +90,7 @@ class SQLRestAPI():
             log.error('Tried to set port while thread is running.')
             raise AttributeError('Cannot set port when thread is running.')
         else:
-            self._port = value
+            self.__port = value
             self.__update_process()
 
     @property
@@ -182,14 +182,14 @@ class SQLRestAPI():
         def __init__(self, host, port, app):
             self.__app = app
             self.__host = host
-            self._port = port
+            self.__port = port
             self.server = None
             Thread.__init__(self, daemon=True)
 
         def run(self):
             '''Run the webserver'''
             log.info('starting server')
-            self.server = make_server(host=self.__host, port=self._port, app=self.__app, threaded=True)
+            self.server = make_server(host=self.__host, port=self.__port, app=self.__app, threaded=True)
             self.server.serve_forever()
 
         def shutdown(self):

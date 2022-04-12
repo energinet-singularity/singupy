@@ -138,7 +138,7 @@ Another method would be to use the requests module in python.
 ````python
 import requests
 
-requests.post('http://localhost:5000/', json={"sql-query": 'SELECT * FROM real_identity WHERE alterego="Batman";'})
+requests.post('http://localhost:5000/', json={"sql-query": 'SELECT * FROM real_identity WHERE alterego="Batman";'}).json()
 ````
 
 ## Help
@@ -149,8 +149,11 @@ requests.post('http://localhost:5000/', json={"sql-query": 'SELECT * FROM real_i
 * SQLRestAPI Connection issues
     * Remember to expose the port (default 5000) in the Dockerfile in case you are running as a container, and to forward that port with the '-p 5000:5000' (or similar) flag.
     * If your script stops due to an exception or exits at the end of the script, the webservice will be taken down - create a loop and/or check for errors.
-    * If you set 'wait_for_ready' to False, be aware you can theoretically send requests before it is ready - give it a moment or use the default wait setup.
-    * The API responds with "The browser (or proxy) sent a request that this server could not understand.", please make sure you are using a json-payload.
+    * If you set 'wait_for_ready' to False, be aware you can theoretically send requests before the webserver is ready - give it a moment or use the default wait setup.
+    * If the API responds with "The browser (or proxy) sent a request that this server could not understand.", please make sure you are using a json-payload.
+
+* SQLRestAPI data issues
+    * Non-ascii characters are encoded as unicode (\uxxxx) - the requests.json() function will decode this, otherwise you will have to do it yourself.
 
 See the [open issues](https://github.com/energinet-singularity/singupy/issues) for a full list of proposed features (and known issues).
 If you are facing unidentified issues with the library, please submit an issue or ask the authors.
