@@ -18,7 +18,7 @@ def GetDummy():
 
 def PostDummy(query: str):
     if 'SELECT' in query:
-        return {"REST": "POST", "QUERY": query}
+        return {"REST": "POST", "QUERY": query, "DANISH": "ÆØÅ"}
     else:
         raise ValueError('I pity the fool!')
 
@@ -58,7 +58,7 @@ def test_SQLRestAPI(SQLRestAPI_resource):
     # Validate GET
     assert requests.get(f'http://localhost:{web.port}/{web.endpoint}').json() == GetDummy()
 
-    # Validate POST
+    # Validate POST (including unicode/dk characters!)
     query = "SELECT * FROM A-TEAM;"
     assert requests.post(f'http://localhost:{web.port}/{web.endpoint}',
                          json={"sql-query": query}).json() == PostDummy(query)
