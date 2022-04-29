@@ -1,1 +1,1 @@
-__all__ = ['hello', 'api', 'conversion']
+__all__ = ['hello', 'api', 'conversion', 'verification']
