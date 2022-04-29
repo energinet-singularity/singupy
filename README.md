@@ -149,6 +149,14 @@ The conversion-module contains functions to convert between different data or ty
 
 This function takes a voltage level in kV as input and returns the corresponding standard letter.
 
+## verification-module
+
+The verification-module contains functions to verify data is as expected
+
+### function verification.*dataframe_columns*
+
+This function takes a pandas dataframe and a list of expected columns and raises an error in case all expected columns are not found in the dataframe.
+
 ## Help
 
 * General
