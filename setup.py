@@ -12,7 +12,7 @@ setup(
         'Flask-RESTful>=0.3.9',
         'requests>=2.27.1'
     ],
-    version='0.1.2',
+    version='0.1.3',
     license='Apache License 2.0',
     description='Library for Singularity',
     long_description=open('README.md').read(),
