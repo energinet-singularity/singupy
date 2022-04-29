@@ -141,6 +141,14 @@ import requests
 requests.post('http://localhost:5000/', json={"sql-query": 'SELECT * FROM real_identity WHERE alterego="Batman";'}).json()
 ````
 
+## conversion-module
+
+The conversion-module contains functions to convert between different data or types of data.
+
+### function conversion.*kv_to_letter*
+
+This function takes a voltage level in kV as input and returns the corresponding standard letter.
+
 ## Help
 
 * General
