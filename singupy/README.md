@@ -104,3 +104,45 @@ This will return name, column names and a rowcount for the served dataframe in a
 
 :arrow_right: **query(query : str) : *returns a dict with a subset of data based on the dataframe***  
 The function uses the pandasql module and sends the received query to the relevant dataframe and gets the data that fits the request.
+
+# conversion-module
+
+The conversion-module contains functions to convert between different data or types of data.
+
+## function conversion.*kv_to_letter*
+
+This function takes a voltage level in kV as input and returns the corresponding standard letter.
+
+### Parameters
+
+:arrow_right: **kv : *voltage level as int, float or string (MUST be numerical)***  
+
+### Returns
+
+:arrow_right: **str : *Standard-letter corresponding the input voltage level***  
+
+### Raises
+
+:arrow_right: **ValueError : *Input value is not a valid numerical value***  
+
+# verification-module
+
+The verification-module contains functions to verify data is as expected
+
+## function verification.*dataframe_columns*
+
+This function takes a pandas dataframe and a list of expected columns and raises an error in case all expected columns are not found in the dataframe. It does not return anything. It is possible to verify the order of the columns as well.
+
+### Parameters
+
+:arrow_right: **dataframe : *dataframe that needs to have its columns verified***  
+
+:arrow_right: **expected_columns : *list of columns that are expected in the dataframe***  
+
+:arrow_right: **allow_extra_columns(False) : *boolean - if true the list and columns must be 1:1, otherwise the dataframe may contain more columns***  
+
+:arrow_right: **fixed_order(False) : *boolean - if true the order of the dataframe columns and expected list must be identical***  
+
+### Raises
+
+:arrow_right: **ValueError : *List and dataframe columns do not match***  

@@ -4,9 +4,11 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def dataframe_columns(dataframe: pd.DataFrame, expected_columns: list, allow_extra_columns: bool = False):
+def dataframe_columns(dataframe: pd.DataFrame, expected_columns: list, allow_extra_columns: bool = False,
+                      fixed_order: bool = False):
     """
-    Verify if columns in dataframe contains expected colums.
+    Verify if columns in dataframe contains expected colums, and order if the 'fixed_order' bool is True.
+
     Parameters
     ----------
     dataframe : pd.Dataframe
@@ -16,24 +18,35 @@ def dataframe_columns(dataframe: pd.DataFrame, expected_columns: list, allow_ext
     allow_extra_columns : bool
         Set True if columns in addition to the expected columns are accepted.
         (Default = False)
+    fixed_order : bool
+        Set True if columns must be in the same order as the list.
+        (Default = False)
     Raises
     ------
     ValueError
-        If dataframe does not contain expected colulmns
+        If list contains items not found in dataframe column names
+        or if list column names exist that are not in list (while allow_extra_columns is False)
+        or if the expected order is incorrect and fixed_order is True.
     """
+    # Note: If this function gets more advanced, contemplate using deepdiff module in stead.
+
     dataframe_columns = list(dataframe.columns)
 
-    # If extra columns are allowed in dataframe, check if expected columns are present in dataframe
-    if allow_extra_columns:
-        if all(item in dataframe_columns for item in expected_columns):
-            log.info('Dataframe contains expected columns.')
-        else:
-            raise ValueError(f"The columns {list(set(expected_columns)-set(dataframe_columns))} are missing in the dataframe")
+    log.debug(f"DataFrame Columns: {dataframe_columns}")
+    log.debug(f"Expected Columns: {expected_columns}")
 
-    # If only expected columns are allowed in dataframe, check if only expected columns are in dataframe
-    else:
-        if sorted(dataframe_columns) == sorted(expected_columns):
-            log.info('Dataframe contains only expected columns.')
-        else:
-            raise ValueError(f"The columns: '{dataframe_columns}' in dataframe does not match expected columns: " +
-                             f"'{expected_columns}'.")
+    # Create a list of column positions in the dataframe
+    try:
+        pos_list = [col_no - dataframe_columns.index(col_name) for col_no, col_name in enumerate(expected_columns)]
+    except Exception:
+        raise ValueError("One or more expected columns were not found in data dataframe.") from None
+
+    # Check that dataframe columns and expected columns contain same elements
+    if allow_extra_columns is False and set(dataframe_columns) != set(expected_columns):
+        raise ValueError("Unexpected columns were found in the dataframe.")
+
+    # Verify order is correct if this is a requirement
+    if fixed_order is True:
+        if (allow_extra_columns is False and not all(pos == 0 for pos in pos_list)) or \
+          allow_extra_columns is True and sorted(pos_list, reverse=True) != pos_list:
+            raise ValueError("Order of columns is incorrect.")
