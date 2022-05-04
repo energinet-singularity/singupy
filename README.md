@@ -6,7 +6,8 @@ Energinet Singularity shared Python Library for packages, functions, classes, de
 
 Holds the following modules:
 * api
-* hello
+* conversion
+* verification
 
 ## Getting Started
 
@@ -155,7 +156,7 @@ The verification-module contains functions to verify data is as expected
 
 ### function verification.*dataframe_columns*
 
-This function takes a pandas dataframe and a list of expected columns and raises an error in case all expected columns are not found in the dataframe.
+This function takes a pandas dataframe and a list of expected columns and raises an error in case all expected columns are not found in the dataframe. It does not return anything. It is possible to verify the order of the columns as well.
 
 ## Help
 
@@ -175,7 +176,12 @@ See the [open issues](https://github.com/energinet-singularity/singupy/issues) f
 If you are facing unidentified issues with the library, please submit an issue or ask the authors.
 
 ## Version History
-
+* 0.2.0:
+    * Add 'conversion' and 'verification' modules - remove 'hello'.
+* 0.1.2:
+    * Add Unicode test and fix a bad parameter name.
+* 0.1.1:
+    * Fix of SQLRestAPI return (json was removed).
 * 0.1:
     * Added the 'api' module with the 'SQLRestAPI' and 'DataFrameAPI' classes.
 * 0.0:
